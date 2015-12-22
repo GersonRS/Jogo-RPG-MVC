@@ -1,22 +1,26 @@
 package control;
 
+import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import model.AudioManager;
 import model.Cenario;
 import model.Elemento;
-import model.Logic;
+import model.GameLogic;
 import model.MainLoop;
+import model.NPC;
 import model.Principal;
 import model.Quadrado;
 import model.Triangulo;
-import view.Renderer;
+import view.GameRenderer;
 
-public class ControlCenter implements LoopSteps {
+public class GameControlCenter implements LoopSteps {
 
 	private MainLoop main;
-	private Renderer render;
-	private Logic logic;
+	private GameRenderer render;
+	private GameLogic logic;
 	public static final int width = 800;
 	public static final int height = 600;
 	protected Elemento elemento;
@@ -26,7 +30,7 @@ public class ControlCenter implements LoopSteps {
 	public static volatile float alpha = 0.0f;
 	public static float add = 0.01f;
 
-	public ControlCenter() {
+	public GameControlCenter() {
 		main = new MainLoop(this, 60);
 		this.cenarios = new HashMap<String, Cenario>();
 		this.elementos = new HashMap<String, ArrayList<Elemento>>();
@@ -61,21 +65,23 @@ public class ControlCenter implements LoopSteps {
 		addTeleport("caverna 1", "floresta 4", 3);
 		addTeleport("caverna 1", "floresta 4", 6);
 		configLayers();
-		// addPecasGeometricas();
 		addElementoPrincipal(new Principal(196, 100, 23, 55, 6,
 				"personagem.png"));
-		this.render = new Renderer(elemento, elementos, cenarios);
-		this.logic = new Logic(elemento, elementos, cenarios);
-		logic.currentCenario("floresta 1");
+		this.render = new GameRenderer(elemento, elementos, cenarios);
+		this.logic = new GameLogic(elemento, elementos, cenarios);
+		logic.currentCenario("cidade");
 		render.currentCenario();
 
 		render.init();
 		render.addKeyListener(InputManager.getInstance());
 		render.addMouseListener(InputManager.getInstance());
+		addPecasGeometricas();
+		addNPCs();
 	}
 
 	@Override
 	public void processLogics(int tick) {
+		InputManager.getInstance().update();
 		logic.logica(tick);
 		if (logic.isAlert()) {
 			render.currentCenario();
@@ -93,17 +99,17 @@ public class ControlCenter implements LoopSteps {
 
 	}
 
-	// public void playSound(String fileName, boolean loop) {
-	// try {
-	// if (loop)
-	// Audio.getInstance().loadAudio(fileName).loop();
-	// else
-	// Audio.getInstance().loadAudio(fileName).play();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-	//
+	public void playSound(String fileName, boolean loop) {
+		try {
+			if (loop)
+				AudioManager.getInstance().loadAudio(fileName).loop();
+			else
+				AudioManager.getInstance().loadAudio(fileName).play();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void loadCenario(String cenario) {
 		if (!cenarios.containsKey(cenario)) {
 			Cenario scenery = new Cenario(cenario);
@@ -144,7 +150,7 @@ public class ControlCenter implements LoopSteps {
 		configLayerInferior("caverna 1", "pedras");
 		configLayerInferior("caverna 1", "paredes");
 		configLayerSuperior("caverna 1", "folhas");
-		// configuração do cenario cidade
+//		 configuração do cenario cidade
 		configLayerInferior("cidade", "grama");
 		configLayerInferior("cidade", "areia");
 		configLayerInferior("cidade", "casas");
@@ -232,5 +238,23 @@ public class ControlCenter implements LoopSteps {
 		addElemento("caverna 1", new Quadrado(160, 704, 22));
 		addElemento("caverna 1", new Triangulo(448, 96, 23));
 		addElemento("cidade", new Quadrado(768, 0, 24));
+	}
+
+	public void addNPCs() {
+		addElemento("cidade",
+				new NPC(508, 180, 27, 57, 2, 4, render.getDialogo(),
+						"Monstro.png"));
+		addElemento("cidade",
+				new NPC(256, 736, 27, 57, 2, 4, render.getDialogo(),
+						"Monstro.png"));
+		addElemento("cidade",
+				new NPC(896, 544, 27, 57, 2, 4, render.getDialogo(),
+						"Monstro.png"));
+		addElemento("floresta 1",
+				new NPC(396, 233, 27, 57, 0, 4, render.getDialogo(),
+						"Monstro.png"));
+		addElemento("floresta 1",
+				new NPC(660, 233, 27, 57, 0, 4, render.getDialogo(),
+						"Monstro.png"));
 	}
 }

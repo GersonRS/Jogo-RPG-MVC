@@ -1,4 +1,4 @@
-package model;
+package view;
 
 import java.awt.Color;
 import java.awt.Frame;
@@ -14,9 +14,12 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
-import view.ImageManager;
+import control.Componente;
+import model.Missao;
+import model.PecaGeometrica;
+import model.Triangulo;
 
-public class MyDialog extends JDialog{
+public class MyDialogPergunta extends JDialog implements Componente{
 
 	private boolean retorno;
 	double resposta = 0.0f;
@@ -24,11 +27,11 @@ public class MyDialog extends JDialog{
 
 	private static final long serialVersionUID = 1L;
 
-	public MyDialog(Frame owner, boolean modal, Missao missao,
+	public MyDialogPergunta(Frame owner, boolean modal, Missao missao,
 			ArrayList<PecaGeometrica> arrayList) throws IOException {
 		super(owner, modal);
 		alternativas = new JButton[3];
-		setSize(600, 400);
+		setSize(800, 600);
 		setLocationRelativeTo(null);
 		setUndecorated(true);
 		setResizable(false);
@@ -79,9 +82,9 @@ public class MyDialog extends JDialog{
 
 		Random r = new Random();
 
-		alternativas[0] = new JButton("" + resposta * 2);
-		alternativas[1] = new JButton("" + resposta / 2);
-		alternativas[2] = new JButton("" + resposta + 2);
+		alternativas[0] = new JButton("" + resposta * r.nextInt(10)+1);
+		alternativas[1] = new JButton("" + resposta / r.nextInt(10)+1);
+		alternativas[2] = new JButton("" + resposta + r.nextInt(10)+1);
 
 		alternativas[r.nextInt(3)].setText("" + resposta);
 
@@ -128,10 +131,9 @@ public class MyDialog extends JDialog{
 				}
 			}
 		});
-
-		setVisible(true);
 	}
 
+	@Override
 	public boolean isRetorno() {
 		return retorno;
 	}

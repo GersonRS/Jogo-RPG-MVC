@@ -49,8 +49,6 @@ public abstract class Personagem extends Elemento {
 		this.numFrames = numFrames;
 		this.friction = 0.3;
 		this.stepInterval = 20;
-		this.setAtivo(true);
-		this.visivel = true;
 		this.image = img;
 		speed = new Point2D.Double();
 		acceleration = new Point2D.Double();

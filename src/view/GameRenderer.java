@@ -15,36 +15,34 @@ import javax.swing.JFrame;
 
 import model.Cenario;
 import model.Elemento;
-import model.PecaGeometrica;
-import model.Personagem;
 import model.Principal;
-import control.ControlCenter;
-import control.InputManager;
+import control.GameControlCenter;
 
-public class Renderer extends JFrame {
+public class GameRenderer extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private BufferStrategy bufferStrategy;
 	private BufferedImage tela;
 	private Graphics2D g, g2d;
 	private Hud hud;
+	private MyDialogPergunta dialogo;
 
 	private HashMap<String, ArrayList<Elemento>> elementos;
 	private HashMap<String, Cenario> cenarios;
 
-	public Renderer(Elemento elemento, HashMap<String, ArrayList<Elemento>> elementos,
+	public GameRenderer(Elemento elemento,
+			HashMap<String, ArrayList<Elemento>> elementos,
 			HashMap<String, Cenario> cenarios) {
-		this.setTitle("Desenvolvimento de Jogos Digitais");
-		this.setSize(ControlCenter.width, ControlCenter.height);
-		this.addKeyListener(InputManager.getInstance());
+		this.setTitle("SPL de Jogos Digitais");
+		this.setSize(GameControlCenter.width, GameControlCenter.height);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setUndecorated(true);
 		this.setIgnoreRepaint(true);
 		this.setVisible(true);
 		this.createBufferStrategy(2);
-		this.setPreferredSize(new Dimension(ControlCenter.width,
-				ControlCenter.height));
+		this.setPreferredSize(new Dimension(GameControlCenter.width,
+				GameControlCenter.height));
 		this.setFocusable(true);
 		this.requestFocus();
 
@@ -56,18 +54,13 @@ public class Renderer extends JFrame {
 
 		g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 		g2d.setColor(Color.BLACK);
-		g2d.fillRect(0, 0, ControlCenter.width, ControlCenter.height);
+		g2d.fillRect(0, 0, GameControlCenter.width, GameControlCenter.height);
 		g2d.dispose();
 		bufferStrategy.show();
 	}
 
 	public void init() {
 		try {
-			ImageManager.getInstance().loadImage("tileset.png");
-			ImageManager.getInstance().loadImage("Monstro.png");
-			ImageManager.getInstance().loadImage("personagem.png");
-			ImageManager.getInstance().loadImage("triangulo.png");
-			ImageManager.getInstance().loadImage("quadrado.png");
 			for (Cenario cenario : cenarios.values()) {
 				desenhaCamadas(cenario);
 			}
@@ -116,10 +109,6 @@ public class Renderer extends JFrame {
 		}
 	}
 
-	public void update() {
-
-	}
-
 	public void paint() {
 		try {
 			g = (Graphics2D) tela.getGraphics();
@@ -131,12 +120,12 @@ public class Renderer extends JFrame {
 			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 			g2d.drawImage(
 					tela,
-					(int) cenarios.get(ControlCenter.currentCenario).getPos().x,
-					(int) cenarios.get(ControlCenter.currentCenario).getPos().y,
+					(int) cenarios.get(GameControlCenter.currentCenario).getPos().x,
+					(int) cenarios.get(GameControlCenter.currentCenario).getPos().y,
 					null);
 			hud.pintaHud(g2d);
 			g2d.setColor(Color.WHITE);
-			g2d.setComposite(AlphaComposite.SrcOver.derive(ControlCenter.alpha));
+			g2d.setComposite(AlphaComposite.SrcOver.derive(GameControlCenter.alpha));
 			g2d.fillRect(0, 0, 800, 600);
 			g2d.dispose();
 			bufferStrategy.show();
@@ -147,37 +136,29 @@ public class Renderer extends JFrame {
 
 	public void currentCenario() {
 		tela = new BufferedImage((int) cenarios.get(
-				ControlCenter.currentCenario).getPos().width, (int) cenarios
-				.get(ControlCenter.currentCenario).getPos().height,
+				GameControlCenter.currentCenario).getPos().width, (int) cenarios
+				.get(GameControlCenter.currentCenario).getPos().height,
 				BufferedImage.TYPE_4BYTE_ABGR);
 	}
 
 	protected void renderElementos(Graphics2D g) throws IOException {
-		for (Elemento elemento : elementos.get(ControlCenter.currentCenario)) {
+		for (Elemento elemento : elementos.get(GameControlCenter.currentCenario)) {
 			if (elemento.isVisivel()) {
-				if (elemento instanceof Personagem) {
-					g.drawImage(
-							ImageManager.getInstance().loadImage(
-									elemento.getImage()),
-							(int) (elemento.getPos().x),
-							(int) (elemento.getPos().y),
-							(int) (elemento.getPos().x + elemento.getPos().width),
-							(int) (elemento.getPos().y + elemento.getPos().height),
-							(int) ((elemento.getAnimates() % elemento
-									.getNumFrames()) * elemento.getPos().width),
-							(int) (elemento.getDirection() * elemento.getPos().height),
-							(int) (((elemento.getAnimates() % elemento
-									.getNumFrames()) * elemento.getPos().width) + elemento
-									.getPos().width),
-							(int) ((elemento.getDirection() * elemento.getPos().height) + elemento
-									.getPos().height), null);
-				} else if (elemento instanceof PecaGeometrica) {
-					g.drawImage(
-							ImageManager.getInstance().loadImage(
-									elemento.getImage()),
-							(int) elemento.getPos().x,
-							(int) elemento.getPos().y, null);
-				}
+				g.drawImage(
+						ImageManager.getInstance().loadImage(
+								elemento.getImage()),
+						(int) (elemento.getPos().x),
+						(int) (elemento.getPos().y),
+						(int) (elemento.getPos().x + elemento.getPos().width),
+						(int) (elemento.getPos().y + elemento.getPos().height),
+						(int) ((elemento.getAnimates() % elemento
+								.getNumFrames()) * elemento.getPos().width),
+						(int) (elemento.getDirection() * elemento.getPos().height),
+						(int) (((elemento.getAnimates() % elemento
+								.getNumFrames()) * elemento.getPos().width) + elemento
+								.getPos().width),
+						(int) ((elemento.getDirection() * elemento.getPos().height) + elemento
+								.getPos().height), null);
 			}
 		}
 	}
@@ -194,7 +175,7 @@ public class Renderer extends JFrame {
 	 */
 	public void render(Graphics2D g, String name) {
 		g.drawImage(
-				cenarios.get(ControlCenter.currentCenario).getLayers()
+				cenarios.get(GameControlCenter.currentCenario).getLayers()
 						.get(name), 0, 0, null);
 	}
 
@@ -207,7 +188,7 @@ public class Renderer extends JFrame {
 	 * @return void
 	 */
 	public void render(Graphics2D g) {
-		for (BufferedImage img : cenarios.get(ControlCenter.currentCenario)
+		for (BufferedImage img : cenarios.get(GameControlCenter.currentCenario)
 				.getLayers().values()) {
 			g.drawImage(img, 0, 0, null);
 		}
@@ -222,7 +203,7 @@ public class Renderer extends JFrame {
 	 * @return void
 	 */
 	public void renderInferior(Graphics2D g) {
-		for (String string : cenarios.get(ControlCenter.currentCenario)
+		for (String string : cenarios.get(GameControlCenter.currentCenario)
 				.getLayersInferiores()) {
 			render(g, string);
 		}
@@ -237,9 +218,14 @@ public class Renderer extends JFrame {
 	 * @return void
 	 */
 	public void renderSuperior(Graphics2D g) {
-		for (String string : cenarios.get(ControlCenter.currentCenario)
+		for (String string : cenarios.get(GameControlCenter.currentCenario)
 				.getLayersSuperiores()) {
 			render(g, string);
 		}
 	}
+
+	public MyDialogPergunta getDialogo() {
+		return dialogo;
+	}
+
 }

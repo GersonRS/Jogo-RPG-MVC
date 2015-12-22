@@ -1,31 +1,20 @@
 package model;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
+import control.Componente;
 import control.InputManager;
 
 public class NPC extends Personagem {
 
 	public String menssagem;
 	public Missao missao;
-	protected BufferedImage rosto;
+	public Componente c;
 
-	public NPC(int x, int y, int width, int height, int direcao, int numFrames,
-			String img, Missao missao) throws IOException {
+	public NPC(int x, int y, int width, int height, int direcao, int numFrames, Componente c,
+			String img){
 		super(x, y, width, height, numFrames, img);
+		this.c = c;
 		direction = direcao;
 		this.menssagem = "seu nivel ainda é baixo para esta missão, \n fale com outro aldeão e suba de nivel.";
-		this.missao = missao;
-
-		try {
-			rosto = ImageIO.read(getClass().getClassLoader().getResource(
-					"images/" + img + "Rosto.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override

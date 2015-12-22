@@ -38,6 +38,7 @@ public abstract class Elemento implements Acoes {
 		this.pos = new Rectangle2D.Double(x, y, width, height);
 		this.collidingEntities = new Elemento[4];
 		this.ativo = true;
+		this.visivel = true;
 	}
 
 	/**

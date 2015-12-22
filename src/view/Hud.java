@@ -24,15 +24,9 @@ public class Hud {
 		posicoes.add(new Point(621 + 75, 235));
 		posicoes.add(new Point(621 + 75, 235 + 85));
 		posicoes.add(new Point(621 + 75, 235 + 85 + 83));
-		try {
-			ImageManager.getInstance().loadImage("hud inventario.png");
-			ImageManager.getInstance().loadImage(principal.getInventario().getImage());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
-	public void renderInventario(Graphics2D g) throws IOException {
+	private void renderInventario(Graphics2D g) throws IOException {
 		ArrayList<PecaGeometrica> pecas = principal.getInventario().getPecasgeometricas();
 		for (int i = 0; i < pecas.size(); i++) {
 			g.drawImage(ImageManager.getInstance().loadImage(pecas.get(i).getImage()), (int) posicoes.get(i)

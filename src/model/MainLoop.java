@@ -1,6 +1,5 @@
 package model;
 
-import control.InputManager;
 import control.LoopSteps;
 
 public class MainLoop implements Runnable {
@@ -15,7 +14,6 @@ public class MainLoop implements Runnable {
 	private LoopSteps game;
 	private long desiredUpdateTime;
 	private boolean running;
-	private boolean pause;
 
 	private long afterTime;
 	private long beforeTime = System.currentTimeMillis();
@@ -86,11 +84,7 @@ public class MainLoop implements Runnable {
 				beforeTime = System.nanoTime();
 				skipFramesInExcessTime();
 
-				InputManager.getInstance().update();
-
-				if (!pause) {
-					game.processLogics(tick);
-				}
+				game.processLogics(tick);
 				game.renderGraphics();
 				afterTime = System.nanoTime();
 
@@ -117,9 +111,8 @@ public class MainLoop implements Runnable {
 		int skips = 0;
 		while ((excessTime > desiredUpdateTime) && (skips < maxFrameSkips)) {
 			excessTime -= desiredUpdateTime;
-			if (!pause) {
-				game.processLogics(tick);
-			}
+			game.processLogics(tick);
+			tick++;
 			skips++;
 		}
 	}
@@ -128,11 +121,4 @@ public class MainLoop implements Runnable {
 		running = false;
 	}
 
-	public void pause() {
-		pause = true;
-	}
-
-	public void resume() {
-		pause = false;
-	}
 }

@@ -8,6 +8,7 @@ public abstract class PecaGeometrica extends Elemento {
 
 	public PecaGeometrica(int x, int y, int id) {
 		super(x, y, 32, 32);
+		this.numFrames = 1;
 	}
 
 	public abstract double calculaArea();

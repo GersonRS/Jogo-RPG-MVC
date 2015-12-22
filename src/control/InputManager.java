@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import javax.swing.event.MouseInputListener;
 
 public class InputManager implements KeyListener, MouseInputListener {
@@ -73,23 +74,27 @@ public class InputManager implements KeyListener, MouseInputListener {
 	}
 
 	public void update() {
-		for (Integer keyCode : keyCache.keySet()) {
-			if (isJustPressed(keyCode)) {
-				keyCache.put(keyCode, KEY_PRESSED);
+		synchronized (pressedKeys) {
+			synchronized (releasedKeys) {
+				for (Integer keyCode : keyCache.keySet()) {
+					if (isJustPressed(keyCode)) {
+						keyCache.put(keyCode, KEY_PRESSED);
+					}
+				}
+				for (int i = 0; i < releasedKeys.size(); i++) {
+					keyCache.put(releasedKeys.get(i), KEY_RELEASED);
+				}
+				for (int i = 0; i < pressedKeys.size(); i++) {
+					if (isReleased(pressedKeys.get(i))) {
+						keyCache.put(pressedKeys.get(i), KEY_JUST_PRESSED);
+					} else {
+						keyCache.put(pressedKeys.get(i), KEY_PRESSED);
+					}
+				}
+				pressedKeys.clear();
+				releasedKeys.clear();
 			}
 		}
-		for (Integer keyCode : releasedKeys) {
-			keyCache.put(keyCode, KEY_RELEASED);
-		}
-		for (Integer keyCode : pressedKeys) {
-			if (isReleased(keyCode)) {
-				keyCache.put(keyCode, KEY_JUST_PRESSED);
-			} else {
-				keyCache.put(keyCode, KEY_PRESSED);
-			}
-		}
-		pressedKeys.clear();
-		releasedKeys.clear();
 	}
 
 	public void keyTyped(KeyEvent e) {
