@@ -3,10 +3,11 @@ package model;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import control.GameControlCenter;
+import control.GameController;
 import control.InputManager;
 
 public class GameLogic {
@@ -15,19 +16,16 @@ public class GameLogic {
 	private final int RIGHT = 1;
 	private final int BELOW = 2;
 	private final int LEFT = 3;
-	protected Elemento elemento;
-	protected HashMap<String, ArrayList<Elemento>> elementos;
-	protected HashMap<String, Cenario> cenarios;
-	protected boolean transition, alert;
+	private Elemento elemento;
+	private HashMap<String, ArrayList<Elemento>> elementos;
+	private HashMap<String, Cenario> cenarios;
+	private boolean transition, alert;
 	private String nextCenerio;
 	private Point2D.Double nextPos;
 
-	public GameLogic(Elemento elemento,
-			HashMap<String, ArrayList<Elemento>> elementos,
-			HashMap<String, Cenario> cenarios) {
-		this.elemento = elemento;
-		this.elementos = elementos;
-		this.cenarios = cenarios;
+	public GameLogic() {
+		this.cenarios = new HashMap<String, Cenario>();
+		this.elementos = new HashMap<String, ArrayList<Elemento>>();
 		this.nextPos = new Point2D.Double();
 	}
 
@@ -39,48 +37,48 @@ public class GameLogic {
 	public void logica(int tick) {
 
 		if (transition) {
-			if (GameControlCenter.alpha > 0.9) {
-				GameControlCenter.add *= -1;
+			if (GameController.alpha > 0.9) {
+				GameController.add *= -1;
 				currentCenario(nextCenerio);
 				elemento.getPos().x = nextPos.x;
 				elemento.getPos().y = nextPos.y;
-				cenarios.get(nextCenerio).getPos().y = (elemento.getPos().y - GameControlCenter.height / 3)
+				cenarios.get(nextCenerio).getPos().y = (elemento.getPos().y - GameController.height / 3)
 						* -1;
-				cenarios.get(nextCenerio).getPos().x = (elemento.getPos().x - GameControlCenter.width / 3)
+				cenarios.get(nextCenerio).getPos().x = (elemento.getPos().x - GameController.width / 3)
 						* -1;
 				// ajeitar o cenario
-				if (cenarios.get(GameControlCenter.currentCenario).getPos().x > 0) {
-					cenarios.get(GameControlCenter.currentCenario).getPos().x = 0;
+				if (cenarios.get(GameController.currentCenario).getPos().x > 0) {
+					cenarios.get(GameController.currentCenario).getPos().x = 0;
 				}
-				if (cenarios.get(GameControlCenter.currentCenario).getPos().y > 0) {
-					cenarios.get(GameControlCenter.currentCenario).getPos().y = 0;
+				if (cenarios.get(GameController.currentCenario).getPos().y > 0) {
+					cenarios.get(GameController.currentCenario).getPos().y = 0;
 				}
-				if (cenarios.get(GameControlCenter.currentCenario).getPos().x < (cenarios
-						.get(GameControlCenter.currentCenario).getPos().width
-						- GameControlCenter.width / 3 - 14 - GameControlCenter.width / 3)
+				if (cenarios.get(GameController.currentCenario).getPos().x < (cenarios
+						.get(GameController.currentCenario).getPos().width
+						- GameController.width / 3 - 14 - GameController.width / 3)
 						* -1) {
-					cenarios.get(GameControlCenter.currentCenario).getPos().x = (cenarios
-							.get(GameControlCenter.currentCenario).getPos().width
-							- GameControlCenter.width / 3 - 14 - GameControlCenter.width / 3)
+					cenarios.get(GameController.currentCenario).getPos().x = (cenarios
+							.get(GameController.currentCenario).getPos().width
+							- GameController.width / 3 - 14 - GameController.width / 3)
 							* -1;
 				}
-				if (cenarios.get(GameControlCenter.currentCenario).getPos().y < (cenarios
-						.get(GameControlCenter.currentCenario).getPos().height
-						- GameControlCenter.height / 3 - 23 - GameControlCenter.height / 3)
+				if (cenarios.get(GameController.currentCenario).getPos().y < (cenarios
+						.get(GameController.currentCenario).getPos().height
+						- GameController.height / 3 - 23 - GameController.height / 3)
 						* -1) {
-					cenarios.get(GameControlCenter.currentCenario).getPos().y = (cenarios
-							.get(GameControlCenter.currentCenario).getPos().height
-							- GameControlCenter.height / 3 - 23 - GameControlCenter.height / 3)
+					cenarios.get(GameController.currentCenario).getPos().y = (cenarios
+							.get(GameController.currentCenario).getPos().height
+							- GameController.height / 3 - 23 - GameController.height / 3)
 							* -1;
 				}
 				nextCenerio = "";
 				updateElementos(tick);
 				alert = true;
 			}
-			GameControlCenter.alpha += GameControlCenter.add;
-			if (GameControlCenter.alpha < 0.0) {
-				GameControlCenter.add = 0.01f;
-				GameControlCenter.alpha = 0.0f;
+			GameController.alpha += GameController.add;
+			if (GameController.alpha < 0.0) {
+				GameController.add = 0.01f;
+				GameController.alpha = 0.0f;
 				transition = false;
 			}
 		} else {
@@ -89,30 +87,30 @@ public class GameLogic {
 
 			updateElementos(tick);
 
-			if (elemento.getPos().x >= GameControlCenter.width / 3
+			if (elemento.getPos().x >= GameController.width / 3
 					&& elemento.getPos().x <= cenarios.get(
-							GameControlCenter.currentCenario).getPos().width
-							- GameControlCenter.width / 3 - 14) {
-				cenarios.get(GameControlCenter.currentCenario).getPos().x -= elemento
+							GameController.currentCenario).getPos().width
+							- GameController.width / 3 - 14) {
+				cenarios.get(GameController.currentCenario).getPos().x -= elemento
 						.getPos().x - x;
 			}
-			if (elemento.getPos().y >= GameControlCenter.height / 3
+			if (elemento.getPos().y >= GameController.height / 3
 					&& elemento.getPos().y <= cenarios.get(
-							GameControlCenter.currentCenario).getPos().height
-							- GameControlCenter.height / 3 - 23) {
-				cenarios.get(GameControlCenter.currentCenario).getPos().y -= elemento
+							GameController.currentCenario).getPos().height
+							- GameController.height / 3 - 23) {
+				cenarios.get(GameController.currentCenario).getPos().y -= elemento
 						.getPos().y - y;
 			}
 
 			// sair do mapa
 			if (elemento.getPos().x < 0
 					|| elemento.getPos().x + elemento.getPos().width > cenarios
-							.get(GameControlCenter.currentCenario).getPos().width) {
+							.get(GameController.currentCenario).getPos().width) {
 				elemento.getPos().x = x;
 			}
 			if (elemento.getPos().y < 0
 					|| elemento.getPos().y + elemento.getPos().height > cenarios
-							.get(GameControlCenter.currentCenario).getPos().height) {
+							.get(GameController.currentCenario).getPos().height) {
 				elemento.getPos().y = y;
 			}
 
@@ -146,7 +144,7 @@ public class GameLogic {
 				elements.remove(elemento);
 			}
 			elementos.get(current).add(elemento);
-			GameControlCenter.currentCenario = current;
+			GameController.currentCenario = current;
 		}
 	}
 
@@ -164,14 +162,14 @@ public class GameLogic {
 	}
 
 	protected void updateElementos(int tick) {
-		for (int i = 0; i < elementos.get(GameControlCenter.currentCenario)
+		for (int i = 0; i < elementos.get(GameController.currentCenario)
 				.size(); i++) {
-			Elemento e = elementos.get(GameControlCenter.currentCenario).get(i);
+			Elemento e = elementos.get(GameController.currentCenario).get(i);
 			if (e.isAtivo()) {
 				e.mover(InputManager.getInstance());
 				e.update(tick);
 			} else {
-				elementos.get(GameControlCenter.currentCenario).remove(e);
+				elementos.get(GameController.currentCenario).remove(e);
 			}
 		}
 		testaColisao();
@@ -179,7 +177,7 @@ public class GameLogic {
 
 	public void testaColisao() {
 		ArrayList<Elemento> element = this.elementos
-				.get(GameControlCenter.currentCenario);
+				.get(GameController.currentCenario);
 		ArrayList<Elemento> obstaculo = this.elementos.get("obstaculos");
 		ArrayList<Elemento> out = this.elementos.get("out");
 
@@ -283,7 +281,7 @@ public class GameLogic {
 					if (out.get(i).getColisao()
 							.intersects(elemento.getColisao())) {
 						String destino = cenarios.get(
-								GameControlCenter.currentCenario).getDestino(
+								GameController.currentCenario).getDestino(
 								out.get(i).id);
 						if (destino != "")
 							for (Elemento in : cenarios.get(destino).getIn()) {
@@ -299,6 +297,17 @@ public class GameLogic {
 			}
 		}
 	}
+	
+	public void playSound(String fileName, boolean loop) {
+		try {
+			if (loop)
+				AudioManager.getInstance().loadAudio(fileName).loop();
+			else
+				AudioManager.getInstance().loadAudio(fileName).play();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public boolean isAlert() {
 		return alert;
@@ -306,6 +315,22 @@ public class GameLogic {
 
 	public void setAlert(boolean alert) {
 		this.alert = alert;
+	}
+
+	public HashMap<String, ArrayList<Elemento>> getElementos() {
+		return elementos;
+	}
+
+	public HashMap<String, Cenario> getCenarios() {
+		return cenarios;
+	}
+
+	public Elemento getElemento() {
+		return elemento;
+	}
+
+	public void setElemento(Elemento elemento) {
+		this.elemento = elemento;
 	}
 
 }

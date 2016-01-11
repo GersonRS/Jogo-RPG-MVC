@@ -1,4 +1,4 @@
-package view;
+package model;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.image.BufferedImage;

@@ -1,6 +1,8 @@
 package model;
 
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * 
@@ -18,7 +20,7 @@ public abstract class Elemento implements Acoes {
 	protected boolean ativo;
 	protected boolean visivel;
 	protected int id;
-	protected String image;
+	protected BufferedImage image;
 
 	/**
 	 * 
@@ -39,6 +41,14 @@ public abstract class Elemento implements Acoes {
 		this.collidingEntities = new Elemento[4];
 		this.ativo = true;
 		this.visivel = true;
+	}
+	
+	public void carregaImage(String image){
+		try {
+			this.image = ImageManager.getInstance().loadImage(image);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -115,7 +125,7 @@ public abstract class Elemento implements Acoes {
 		this.visivel = visivel;
 	}
 
-	public String getImage() {
+	public BufferedImage getImage() {
 		return image;
 	}
 

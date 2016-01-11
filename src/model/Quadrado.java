@@ -6,7 +6,7 @@ public class Quadrado extends PecaGeometrica {
 
 	public Quadrado(int x, int y, int id) {
 		super(x, y, id);
-		this.image = "quadrado.png";
+		carregaImage("quadrado.png");
 	}
 
 	@Override

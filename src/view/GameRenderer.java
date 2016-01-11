@@ -15,8 +15,9 @@ import javax.swing.JFrame;
 
 import model.Cenario;
 import model.Elemento;
+import model.ImageManager;
 import model.Principal;
-import control.GameControlCenter;
+import control.GameController;
 
 public class GameRenderer extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -34,15 +35,15 @@ public class GameRenderer extends JFrame {
 			HashMap<String, ArrayList<Elemento>> elementos,
 			HashMap<String, Cenario> cenarios) {
 		this.setTitle("SPL de Jogos Digitais");
-		this.setSize(GameControlCenter.width, GameControlCenter.height);
+		this.setSize(GameController.width, GameController.height);
 		this.setLocationRelativeTo(null);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setUndecorated(true);
 		this.setIgnoreRepaint(true);
 		this.setVisible(true);
 		this.createBufferStrategy(2);
-		this.setPreferredSize(new Dimension(GameControlCenter.width,
-				GameControlCenter.height));
+		this.setPreferredSize(new Dimension(GameController.width,
+				GameController.height));
 		this.setFocusable(true);
 		this.requestFocus();
 
@@ -54,7 +55,7 @@ public class GameRenderer extends JFrame {
 
 		g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 		g2d.setColor(Color.BLACK);
-		g2d.fillRect(0, 0, GameControlCenter.width, GameControlCenter.height);
+		g2d.fillRect(0, 0, GameController.width, GameController.height);
 		g2d.dispose();
 		bufferStrategy.show();
 	}
@@ -110,7 +111,6 @@ public class GameRenderer extends JFrame {
 	}
 
 	public void paint() {
-		try {
 			g = (Graphics2D) tela.getGraphics();
 
 			renderInferior(g);
@@ -120,33 +120,30 @@ public class GameRenderer extends JFrame {
 			g2d = (Graphics2D) bufferStrategy.getDrawGraphics();
 			g2d.drawImage(
 					tela,
-					(int) cenarios.get(GameControlCenter.currentCenario).getPos().x,
-					(int) cenarios.get(GameControlCenter.currentCenario).getPos().y,
+					(int) cenarios.get(GameController.currentCenario).getPos().x,
+					(int) cenarios.get(GameController.currentCenario).getPos().y,
 					null);
 			hud.pintaHud(g2d);
 			g2d.setColor(Color.WHITE);
-			g2d.setComposite(AlphaComposite.SrcOver.derive(GameControlCenter.alpha));
+			g2d.setComposite(AlphaComposite.SrcOver
+					.derive(GameController.alpha));
 			g2d.fillRect(0, 0, 800, 600);
 			g2d.dispose();
 			bufferStrategy.show();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	public void currentCenario() {
 		tela = new BufferedImage((int) cenarios.get(
-				GameControlCenter.currentCenario).getPos().width, (int) cenarios
-				.get(GameControlCenter.currentCenario).getPos().height,
+				GameController.currentCenario).getPos().width, (int) cenarios
+				.get(GameController.currentCenario).getPos().height,
 				BufferedImage.TYPE_4BYTE_ABGR);
 	}
 
-	protected void renderElementos(Graphics2D g) throws IOException {
-		for (Elemento elemento : elementos.get(GameControlCenter.currentCenario)) {
+	protected void renderElementos(Graphics2D g){
+		for (Elemento elemento : elementos.get(GameController.currentCenario)) {
 			if (elemento.isVisivel()) {
 				g.drawImage(
-						ImageManager.getInstance().loadImage(
-								elemento.getImage()),
+						elemento.getImage(),
 						(int) (elemento.getPos().x),
 						(int) (elemento.getPos().y),
 						(int) (elemento.getPos().x + elemento.getPos().width),
@@ -174,9 +171,8 @@ public class GameRenderer extends JFrame {
 	 * @return void
 	 */
 	public void render(Graphics2D g, String name) {
-		g.drawImage(
-				cenarios.get(GameControlCenter.currentCenario).getLayers()
-						.get(name), 0, 0, null);
+		g.drawImage(cenarios.get(GameController.currentCenario).getLayers()
+				.get(name), 0, 0, null);
 	}
 
 	/**
@@ -188,7 +184,7 @@ public class GameRenderer extends JFrame {
 	 * @return void
 	 */
 	public void render(Graphics2D g) {
-		for (BufferedImage img : cenarios.get(GameControlCenter.currentCenario)
+		for (BufferedImage img : cenarios.get(GameController.currentCenario)
 				.getLayers().values()) {
 			g.drawImage(img, 0, 0, null);
 		}
@@ -203,7 +199,7 @@ public class GameRenderer extends JFrame {
 	 * @return void
 	 */
 	public void renderInferior(Graphics2D g) {
-		for (String string : cenarios.get(GameControlCenter.currentCenario)
+		for (String string : cenarios.get(GameController.currentCenario)
 				.getLayersInferiores()) {
 			render(g, string);
 		}
@@ -218,7 +214,7 @@ public class GameRenderer extends JFrame {
 	 * @return void
 	 */
 	public void renderSuperior(Graphics2D g) {
-		for (String string : cenarios.get(GameControlCenter.currentCenario)
+		for (String string : cenarios.get(GameController.currentCenario)
 				.getLayersSuperiores()) {
 			render(g, string);
 		}

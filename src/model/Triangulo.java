@@ -6,7 +6,7 @@ public class Triangulo extends PecaGeometrica {
 
 	public Triangulo(int x, int y, int id) {
 		super(x, y, id);
-		this.image = "triangulo.png";
+		carregaImage("triangulo.png");
 	}
 
 	@Override

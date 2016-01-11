@@ -1,39 +1,30 @@
 package control;
 
-import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-import model.AudioManager;
 import model.Cenario;
 import model.Elemento;
 import model.GameLogic;
-import model.MainLoop;
 import model.NPC;
 import model.Principal;
 import model.Quadrado;
 import model.Triangulo;
 import view.GameRenderer;
 
-public class GameControlCenter implements LoopSteps {
+public class GameController implements LoopSteps {
 
 	private MainLoop main;
 	private GameRenderer render;
 	private GameLogic logic;
 	public static final int width = 800;
 	public static final int height = 600;
-	protected Elemento elemento;
-	protected HashMap<String, ArrayList<Elemento>> elementos;
-	protected HashMap<String, Cenario> cenarios;
 	public static String currentCenario;
 	public static volatile float alpha = 0.0f;
 	public static float add = 0.01f;
 
-	public GameControlCenter() {
+	public GameController() {
 		main = new MainLoop(this, 60);
-		this.cenarios = new HashMap<String, Cenario>();
-		this.elementos = new HashMap<String, ArrayList<Elemento>>();
+		this.logic = new GameLogic();
 		new Thread(main).start();
 	}
 
@@ -67,8 +58,7 @@ public class GameControlCenter implements LoopSteps {
 		configLayers();
 		addElementoPrincipal(new Principal(196, 100, 23, 55, 6,
 				"personagem.png"));
-		this.render = new GameRenderer(elemento, elementos, cenarios);
-		this.logic = new GameLogic(elemento, elementos, cenarios);
+		this.render = new GameRenderer(logic.getElemento(), logic.getElementos(), logic.getCenarios());
 		logic.currentCenario("cidade");
 		render.currentCenario();
 
@@ -99,47 +89,36 @@ public class GameControlCenter implements LoopSteps {
 
 	}
 
-	public void playSound(String fileName, boolean loop) {
-		try {
-			if (loop)
-				AudioManager.getInstance().loadAudio(fileName).loop();
-			else
-				AudioManager.getInstance().loadAudio(fileName).play();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public void loadCenario(String cenario) {
-		if (!cenarios.containsKey(cenario)) {
+		if (!logic.getCenarios().containsKey(cenario)) {
 			Cenario scenery = new Cenario(cenario);
-			this.cenarios.put(cenario, scenery);
+			logic.getCenarios().put(cenario, scenery);
 			ArrayList<Elemento> elements = new ArrayList<Elemento>();
-			elementos.put(cenario, elements);
+			logic.getElementos().put(cenario, elements);
 		}
 	}
 
 	protected void configLayerInferior(String cenario, String layer) {
-		cenarios.get(cenario).configLayerInferior(layer);
+		logic.getCenarios().get(cenario).configLayerInferior(layer);
 	}
 
 	protected void configLayerSuperior(String cenario, String layer) {
-		cenarios.get(cenario).configLayerSuperior(layer);
+		logic.getCenarios().get(cenario).configLayerSuperior(layer);
 	}
 
 	public void addElemento(String cenario, Elemento e) {
-		elementos.get(cenario).add(e);
+		logic.getElementos().get(cenario).add(e);
 	}
 
 	public void addElementoPrincipal(Elemento e) {
-		this.elemento = e;
+		logic.setElemento(e);
 	}
 
 	public void addTeleport(String cenariOrigem, String cenarioDestino,
 			int local) {
-		if (cenarios.containsKey(cenariOrigem)
-				&& cenarios.containsKey(cenarioDestino)) {
-			cenarios.get(cenariOrigem).addTeleport(cenarioDestino, local);
+		if (logic.getCenarios().containsKey(cenariOrigem)
+				&& logic.getCenarios().containsKey(cenarioDestino)) {
+			logic.getCenarios().get(cenariOrigem).addTeleport(cenarioDestino, local);
 		}
 	}
 

@@ -49,10 +49,10 @@ public abstract class Personagem extends Elemento {
 		this.numFrames = numFrames;
 		this.friction = 0.3;
 		this.stepInterval = 20;
-		this.image = img;
 		speed = new Point2D.Double();
 		acceleration = new Point2D.Double();
 		maxSpeed = new Point2D.Double(2, 2);
+		carregaImage(img);
 	}
 
 	@Override

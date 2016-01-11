@@ -1,6 +1,5 @@
-package model;
+package control;
 
-import control.LoopSteps;
 
 public class MainLoop implements Runnable {
 	public static final int DEFAULT_UPS = 80;

@@ -14,10 +14,10 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
-import control.Componente;
 import model.Missao;
 import model.PecaGeometrica;
 import model.Triangulo;
+import control.Componente;
 
 public class MyDialogPergunta extends JDialog implements Componente{
 
@@ -55,7 +55,7 @@ public class MyDialogPergunta extends JDialog implements Componente{
 						tamanho += pecaGeometrica.getTamanho() + ", ";
 					}
 					resposta += pecaGeometrica.calculaArea();
-					JLabel img = new JLabel(new ImageIcon(ImageManager.getInstance().loadImage(pecaGeometrica.getImage())));
+					JLabel img = new JLabel(new ImageIcon(pecaGeometrica.getImage()));
 					img.setBounds(x > 2 ? 200 + x - 3 * 100 : 200 + x * 100,
 							100 + (x > 2 ? 100 : 0), 32, 32);
 					fundo.add(img);

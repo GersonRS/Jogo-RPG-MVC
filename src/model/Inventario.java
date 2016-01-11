@@ -1,16 +1,22 @@
 package model;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Inventario {
 
 	private final int NUM_MAX = 6;
 	private ArrayList<PecaGeometrica> pecasgeometricas;
-	private String image;
+	private BufferedImage image;
 
 	public Inventario() {
 		pecasgeometricas = new ArrayList<PecaGeometrica>();
-		this.image = "inventario.png";
+		try {
+			this.image = ImageManager.getInstance().loadImage("inventario.png");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void add(PecaGeometrica peca) {
@@ -36,7 +42,7 @@ public class Inventario {
 		return NUM_MAX;
 	}
 
-	public String getImage() {
+	public BufferedImage getImage() {
 		return image;
 	}
 	
